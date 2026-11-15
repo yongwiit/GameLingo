@@ -38,26 +38,26 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from GameLingo.capture import MSSCapture, physical_monitors, topology_signature
-from GameLingo.errors import DeskTranslateError
-from GameLingo.hotkeys import Hotkeys, validate_hotkeys
-from GameLingo.languages import LANGUAGES, source_languages
-from GameLingo.metrics import LatencyMetrics
-from GameLingo.models import PipelineEvent, Rect, SessionState, Stamp, TranslationRequest
-from GameLingo.ocr import IsolatedOCR, ModelManager
-from GameLingo.pipeline import Pipeline
-from GameLingo.presentation import session_presentation
-from GameLingo.providers import SPECS, create_provider
-from GameLingo.security import CredentialStore, is_loopback_endpoint, validate_endpoint
-from GameLingo.settings import Settings, SettingsStore
-from GameLingo.ui.glossary import editor_content, exchange_controls, parse_editor
-from GameLingo.ui.jobs import Jobs
-from GameLingo.ui.onboarding import Onboarding
-from GameLingo.ui.overlay import Overlay
-from GameLingo.ui.overlay_editor import OverlayEditor
-from GameLingo.ui.selection import RegionSelector
-from GameLingo.ui.theme import apply_theme, icon
-from GameLingo.window_capture import (
+from desktranslate.capture import MSSCapture, physical_monitors, topology_signature
+from desktranslate.errors import DeskTranslateError
+from desktranslate.hotkeys import Hotkeys, validate_hotkeys
+from desktranslate.languages import LANGUAGES, source_languages
+from desktranslate.metrics import LatencyMetrics
+from desktranslate.models import PipelineEvent, Rect, SessionState, Stamp, TranslationRequest
+from desktranslate.ocr import IsolatedOCR, ModelManager
+from desktranslate.pipeline import Pipeline
+from desktranslate.presentation import session_presentation
+from desktranslate.providers import SPECS, create_provider
+from desktranslate.security import CredentialStore, is_loopback_endpoint, validate_endpoint
+from desktranslate.settings import Settings, SettingsStore
+from desktranslate.ui.glossary import editor_content, exchange_controls, parse_editor
+from desktranslate.ui.jobs import Jobs
+from desktranslate.ui.onboarding import Onboarding
+from desktranslate.ui.overlay import Overlay
+from desktranslate.ui.overlay_editor import OverlayEditor
+from desktranslate.ui.selection import RegionSelector
+from desktranslate.ui.theme import apply_theme, icon
+from desktranslate.window_capture import (
     Win32Windows,
     WindowCapture,
     normalized_region,
@@ -714,7 +714,7 @@ class MainWindow(QMainWindow):
         page.addStretch()
 
     def build_profiles(self) -> None:
-        from GameLingo.ui.profiles import ProfilePage
+        from desktranslate.ui.profiles import ProfilePage
 
         page = self.page(
             "A setup for every story.",
@@ -766,7 +766,7 @@ class MainWindow(QMainWindow):
         return True
 
     def build_diagnostics(self) -> None:
-        from GameLingo.ui.support import SupportPage
+        from desktranslate.ui.support import SupportPage
 
         page = self.page(
             "A clear view of the app.",
@@ -777,7 +777,7 @@ class MainWindow(QMainWindow):
         page.addWidget(self.support_page)
 
     def build_transcript(self) -> None:
-        from GameLingo.ui.transcript import TranscriptPage
+        from desktranslate.ui.transcript import TranscriptPage
 
         page = self.page(
             "Keep this conversation close.", "An optional, temporary transcript that you control."
@@ -786,7 +786,7 @@ class MainWindow(QMainWindow):
         page.addWidget(self.transcript_page)
 
     def diagnostic_metadata(self, include_model: bool = False) -> dict[str, Any]:
-        from GameLingo.diagnostics import diagnostic_metadata
+        from desktranslate.diagnostics import diagnostic_metadata
 
         displays = [
             {
@@ -901,7 +901,7 @@ class MainWindow(QMainWindow):
         self.region_label.setText(description)
 
     def choose_window(self) -> None:
-        from GameLingo.ui.capture_picker import WindowPicker
+        from desktranslate.ui.capture_picker import WindowPicker
 
         self.stop()
         try:
@@ -1485,7 +1485,7 @@ class MainWindow(QMainWindow):
             updated.glossary = glossary
             updated.glossary_source, updated.glossary_target = updated.source, updated.target
             if updated.active_profile:
-                from GameLingo.profiles import profile_values
+                from desktranslate.profiles import profile_values
 
                 updated.profiles[updated.active_profile] = profile_values(updated)
             updated.validate()
@@ -1758,7 +1758,7 @@ class MainWindow(QMainWindow):
             self.overlay.display("明日、またここで会おう。", "Let's meet here again tomorrow.")
 
     def apply_overlay_preset(self) -> None:
-        from GameLingo.ui.subtitles import PRESETS
+        from desktranslate.ui.subtitles import PRESETS
 
         preset = PRESETS[self.overlay_editor.presets.currentText()]
         if "overlay_size" in preset:
@@ -1878,7 +1878,7 @@ class MainWindow(QMainWindow):
         self.support_page.copy()
 
     def check_updates(self) -> None:
-        from GameLingo.updates import check_release
+        from desktranslate.updates import check_release
 
         channel = self.settings.update_channel
         self.support_page.update_url = ""
