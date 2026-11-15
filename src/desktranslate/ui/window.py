@@ -38,26 +38,26 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from desktranslate.capture import MSSCapture, physical_monitors, topology_signature
-from desktranslate.errors import DeskTranslateError
-from desktranslate.hotkeys import Hotkeys, validate_hotkeys
-from desktranslate.languages import LANGUAGES, source_languages
-from desktranslate.metrics import LatencyMetrics
-from desktranslate.models import PipelineEvent, Rect, SessionState, Stamp, TranslationRequest
-from desktranslate.ocr import IsolatedOCR, ModelManager
-from desktranslate.pipeline import Pipeline
-from desktranslate.presentation import session_presentation
-from desktranslate.providers import SPECS, create_provider
-from desktranslate.security import CredentialStore, is_loopback_endpoint, validate_endpoint
-from desktranslate.settings import Settings, SettingsStore
-from desktranslate.ui.glossary import editor_content, exchange_controls, parse_editor
-from desktranslate.ui.jobs import Jobs
-from desktranslate.ui.onboarding import Onboarding
-from desktranslate.ui.overlay import Overlay
-from desktranslate.ui.overlay_editor import OverlayEditor
-from desktranslate.ui.selection import RegionSelector
-from desktranslate.ui.theme import apply_theme, icon
-from desktranslate.window_capture import (
+from GameLingo.capture import MSSCapture, physical_monitors, topology_signature
+from GameLingo.errors import DeskTranslateError
+from GameLingo.hotkeys import Hotkeys, validate_hotkeys
+from GameLingo.languages import LANGUAGES, source_languages
+from GameLingo.metrics import LatencyMetrics
+from GameLingo.models import PipelineEvent, Rect, SessionState, Stamp, TranslationRequest
+from GameLingo.ocr import IsolatedOCR, ModelManager
+from GameLingo.pipeline import Pipeline
+from GameLingo.presentation import session_presentation
+from GameLingo.providers import SPECS, create_provider
+from GameLingo.security import CredentialStore, is_loopback_endpoint, validate_endpoint
+from GameLingo.settings import Settings, SettingsStore
+from GameLingo.ui.glossary import editor_content, exchange_controls, parse_editor
+from GameLingo.ui.jobs import Jobs
+from GameLingo.ui.onboarding import Onboarding
+from GameLingo.ui.overlay import Overlay
+from GameLingo.ui.overlay_editor import OverlayEditor
+from GameLingo.ui.selection import RegionSelector
+from GameLingo.ui.theme import apply_theme, icon
+from GameLingo.window_capture import (
     Win32Windows,
     WindowCapture,
     normalized_region,
@@ -156,7 +156,7 @@ class MainWindow(QMainWindow):
         self.callbacks: dict[int, Callable[[object, str], None]] = {}
         self.jobs.done.connect(self.job_done, Qt.ConnectionType.QueuedConnection)
         self.jobs.progress.connect(self.download_progress, Qt.ConnectionType.QueuedConnection)
-        self.setWindowTitle("DeskTranslate 2")
+        self.setWindowTitle("GameLingo 2")
         self.setWindowIcon(icon())
         available = QApplication.primaryScreen().availableGeometry()
         self.resize(min(1000, available.width() - 40), min(800, available.height() - 40))
@@ -172,7 +172,7 @@ class MainWindow(QMainWindow):
         sidebar = QVBoxLayout(self.sidebar_widget)
         sidebar.setContentsMargins(0, 0, 0, 0)
         sidebar.setSpacing(16)
-        sidebar.addWidget(label("▣  DeskTranslate", "brand"))
+        sidebar.addWidget(label("▣  GameLingo", "brand"))
         sidebar.addWidget(label("VERSION 2  ·  SCREEN TRANSLATION", "eyebrow"))
         self.navigation = QListWidget()
         self.navigation.setFixedWidth(200)
@@ -201,7 +201,7 @@ class MainWindow(QMainWindow):
             [self.navigation.item(index).text() for index in range(self.navigation.count())]
         )
         self.compact_navigation.setAccessibleName("Navigation")
-        self.compact_navigation.setToolTip("Choose a DeskTranslate page")
+        self.compact_navigation.setToolTip("Choose a GameLingo page")
         root_layout.addWidget(self.compact_navigation)
         self.pages = QStackedWidget()
         root_layout.addWidget(self.pages, 1)
@@ -271,11 +271,11 @@ class MainWindow(QMainWindow):
             f"{self.settings.hotkeys['once']} · Translate anywhere     {self.settings.hotkeys['pause']} · Pause live"
         )
         self.tray = QSystemTrayIcon(icon(), self)
-        self.tray.setToolTip("DeskTranslate 2")
+        self.tray.setToolTip("GameLingo 2")
         menu = QMenu()
         self.tray_actions: dict[str, QAction] = {}
         for title, callback in [
-            ("Open DeskTranslate", self.showNormal),
+            ("Open GameLingo", self.showNormal),
             ("Translate once", lambda: self.select("once")),
             ("Start live", lambda: self.select("live")),
             ("Pause / resume", self.pause),
@@ -691,7 +691,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(form)
         self.tray_check = QCheckBox("Close to the system tray")
         self.tray_check.setToolTip(
-            "Closing the window keeps DeskTranslate running. Choose Quit from its tray menu to exit."
+            "Closing the window keeps GameLingo running. Choose Quit from its tray menu to exit."
         )
         self.tray_check.setChecked(self.settings.close_to_tray)
         layout.addWidget(self.tray_check)
@@ -714,7 +714,7 @@ class MainWindow(QMainWindow):
         page.addStretch()
 
     def build_profiles(self) -> None:
-        from desktranslate.ui.profiles import ProfilePage
+        from GameLingo.ui.profiles import ProfilePage
 
         page = self.page(
             "A setup for every story.",
@@ -766,7 +766,7 @@ class MainWindow(QMainWindow):
         return True
 
     def build_diagnostics(self) -> None:
-        from desktranslate.ui.support import SupportPage
+        from GameLingo.ui.support import SupportPage
 
         page = self.page(
             "A clear view of the app.",
@@ -777,7 +777,7 @@ class MainWindow(QMainWindow):
         page.addWidget(self.support_page)
 
     def build_transcript(self) -> None:
-        from desktranslate.ui.transcript import TranscriptPage
+        from GameLingo.ui.transcript import TranscriptPage
 
         page = self.page(
             "Keep this conversation close.", "An optional, temporary transcript that you control."
@@ -786,7 +786,7 @@ class MainWindow(QMainWindow):
         page.addWidget(self.transcript_page)
 
     def diagnostic_metadata(self, include_model: bool = False) -> dict[str, Any]:
-        from desktranslate.diagnostics import diagnostic_metadata
+        from GameLingo.diagnostics import diagnostic_metadata
 
         displays = [
             {
@@ -901,7 +901,7 @@ class MainWindow(QMainWindow):
         self.region_label.setText(description)
 
     def choose_window(self) -> None:
-        from desktranslate.ui.capture_picker import WindowPicker
+        from GameLingo.ui.capture_picker import WindowPicker
 
         self.stop()
         try:
@@ -952,7 +952,7 @@ class MainWindow(QMainWindow):
         if self.closing:
             return False
         if self.exit_code:
-            self.notice("Quit DeskTranslate, then launch it again before starting translation.")
+            self.notice("Quit GameLingo, then launch it again before starting translation.")
             return False
         return True
 
@@ -1139,7 +1139,7 @@ class MainWindow(QMainWindow):
             )
             self.pipeline.start()
             self.refresh_session_view()
-            self.overlay.status.setText("DESKTRANSLATE  /  STARTING")
+            self.overlay.status.setText("GameLingo  /  STARTING")
             if not self.overlay.suppressed:
                 self.overlay.show()
         except (DeskTranslateError, ValueError) as error:
@@ -1164,7 +1164,7 @@ class MainWindow(QMainWindow):
         if hasattr(self, "status_label"):
             self.status_label.setText("Ready when you are.")
         if hasattr(self, "overlay"):
-            self.overlay.status.setText("DESKTRANSLATE  /  STOPPED")
+            self.overlay.status.setText("GameLingo  /  STOPPED")
             self.overlay.capture_region = None
             self.overlay.suppressed = False
         self.refresh_session_view()
@@ -1200,7 +1200,7 @@ class MainWindow(QMainWindow):
             elif not pipeline.wait_closed(0):
                 self.exit_code = 1
                 self.notice(
-                    "A worker could not clean up completely. Exit and restart DeskTranslate before continuing."
+                    "A worker could not clean up completely. Exit and restart GameLingo before continuing."
                 )
         self.retiring = active
 
@@ -1225,10 +1225,10 @@ class MainWindow(QMainWindow):
             # Retire all controller-owned work, including a replacement session
             # when an older worker reports failure. stop() refreshes the now-empty view.
             self.stop()
-            self.notice("A worker could not clean up. Quit DeskTranslate, then launch it again.")
+            self.notice("A worker could not clean up. Quit GameLingo, then launch it again.")
             return
         if self.exit_code:
-            self.overlay.status.setText("DESKTRANSLATE  /  RESTART REQUIRED")
+            self.overlay.status.setText("GameLingo  /  RESTART REQUIRED")
         completed = bool(pipeline and pipeline.once and pipeline.cancel.is_set())
         view = session_presentation(
             pipeline.session.state if pipeline else None,
@@ -1256,7 +1256,7 @@ class MainWindow(QMainWindow):
             self.tray_actions["Pause / resume"].setText(view.pause_text)
             self.tray_actions["Pause / resume"].setEnabled(view.can_pause)
             self.tray_actions["Stop"].setEnabled(view.can_stop)
-            self.tray.setToolTip("DeskTranslate 2 · " + view.summary)
+            self.tray.setToolTip("GameLingo 2 · " + view.summary)
         needs_poll = bool(self.retiring) or bool(
             pipeline
             and (
@@ -1278,7 +1278,7 @@ class MainWindow(QMainWindow):
         if event.region:
             self.overlay.avoid_capture(event.region)
         self.status_label.setText(event.error or event.state.value.capitalize())
-        self.overlay.status.setText("DESKTRANSLATE  /  " + event.state.value.upper())
+        self.overlay.status.setText("GameLingo  /  " + event.state.value.upper())
         self.overlay.pause_button.setText(
             "Resume" if event.state in {SessionState.PAUSED, SessionState.ERROR} else "Pause"
         )
@@ -1337,7 +1337,7 @@ class MainWindow(QMainWindow):
         if event.category:
             self.errors = (self.errors + [event.category])[-10:]
             self.notice(event.error)
-            self.overlay.status.setText("DESKTRANSLATE  /  PAUSED · " + event.error)
+            self.overlay.status.setText("GameLingo  /  PAUSED · " + event.error)
             if self.tray.isVisible():
                 self.tray.showMessage(
                     "Translation paused", event.error, QSystemTrayIcon.MessageIcon.Warning, 5000
@@ -1485,7 +1485,7 @@ class MainWindow(QMainWindow):
             updated.glossary = glossary
             updated.glossary_source, updated.glossary_target = updated.source, updated.target
             if updated.active_profile:
-                from desktranslate.profiles import profile_values
+                from GameLingo.profiles import profile_values
 
                 updated.profiles[updated.active_profile] = profile_values(updated)
             updated.validate()
@@ -1758,7 +1758,7 @@ class MainWindow(QMainWindow):
             self.overlay.display("明日、またここで会おう。", "Let's meet here again tomorrow.")
 
     def apply_overlay_preset(self) -> None:
-        from desktranslate.ui.subtitles import PRESETS
+        from GameLingo.ui.subtitles import PRESETS
 
         preset = PRESETS[self.overlay_editor.presets.currentText()]
         if "overlay_size" in preset:
@@ -1878,7 +1878,7 @@ class MainWindow(QMainWindow):
         self.support_page.copy()
 
     def check_updates(self) -> None:
-        from desktranslate.updates import check_release
+        from GameLingo.updates import check_release
 
         channel = self.settings.update_channel
         self.support_page.update_url = ""
@@ -1980,7 +1980,7 @@ class MainWindow(QMainWindow):
             ):
                 self.exit_code = 1
 
-        worker = Thread(target=finish_workers, name="desktranslate-shutdown", daemon=True)
+        worker = Thread(target=finish_workers, name="GameLingo-shutdown", daemon=True)
         worker.start()
         self.shutdown_timer = QTimer(self)
 
